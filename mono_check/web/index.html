@@ -9,7 +9,7 @@
 </head>
 <body>
   <header class="topbar">
-    <div class="wrap top-inner"><a href="/" class="brand">Фінмоніторинг</a><span class="top-note">Прототип для mono</span></div>
+    <div class="wrap top-inner"><a href="/" class="brand">Фінмоніторинг</a><a href="#history" class="top-note">Історія перевірок</a></div>
   </header>
   <main class="wrap">
     <section aria-labelledby="heading" class="intro">
@@ -34,7 +34,7 @@
     <div id="message" class="message" role="status" aria-live="polite"></div>
     <section id="report" aria-label="Звіт перевірки" hidden>
       <div id="report-head" class="report-head card"></div>
-      <div class="report-grid">
+      <div id="report-grid" class="report-grid">
         <div class="report-details">
           <section class="card section-card"><h2>Дані з виписки</h2><div id="facts"></div></section>
           <section class="card section-card"><h2>Перевірки за PDF</h2><div id="checks"></div></section>
@@ -47,6 +47,16 @@
           <div class="pdf-background"><div class="sheet"><img id="sheet" alt="Сторінка завантаженої виписки"><div id="marks" aria-hidden="true"></div></div></div>
           <p id="active-proof" class="active-proof" aria-live="polite">Обери доказ у звіті, щоб перейти до фрагмента.</p>
         </aside>
+      </div>
+    </section>
+    <section id="history" class="card section-card history" aria-labelledby="history-title">
+      <h2 id="history-title">Історія перевірок</h2>
+      <p id="history-message" class="muted" role="status">Завантажуємо історію…</p>
+      <div id="history-table" class="history-table" hidden>
+        <table aria-labelledby="history-title">
+          <thead><tr><th scope="col">Дата й час</th><th scope="col">Компанія / ЄДРПОУ</th><th scope="col">Маршрут</th><th scope="col">Режим</th><th scope="col">Дія працівника</th></tr></thead>
+          <tbody id="history-rows"></tbody>
+        </table>
       </div>
     </section>
   </main>

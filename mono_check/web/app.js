@@ -24,6 +24,8 @@ let report;
 let chosenPage = 1;
 let activeButton;
 let busy = false;
+let historyRequest = 0;
+const historyDate = new Intl.DateTimeFormat("uk-UA", {dateStyle: "short", timeStyle: "short"});
 
 function pill(text, status) {
   return node("span", text, "pill " + status.toLowerCase());
@@ -123,10 +125,93 @@ function renderRule(rule) {
   return check;
 }
 
-function renderReport(data) {
+function renderHistory(entries) {
+  $("history-message").textContent = entries.length ? "" : "Поки немає збережених перевірок.";
+  $("history-message").hidden = entries.length > 0;
+  $("history-table").hidden = entries.length === 0;
+  $("history-rows").replaceChildren(...entries.map((entry) => {
+    const row = node("tr");
+    row.dataset.historyId = entry.id;
+    row.addEventListener("click", () => openHistory(entry.id));
+    const company = node("td");
+    const open = node("button", entry.company || "Назву не встановлено", "history-company");
+    open.type = "button";
+    open.setAttribute("aria-label", "Відкрити перевірку " + (entry.company || "№" + entry.id));
+    company.append(open);
+    if (entry.code) company.append(node("small", entry.code));
+    const route = node("td");
+    route.append(pill(entry.route_label, entry.route));
+    const decision = node("td", actions[entry.decision] || "Очікує дії");
+    if (entry.comment) decision.append(node("small", entry.comment));
+    row.append(node("td", historyDate.format(new Date(entry.created_at))), company, route, node("td", entry.mode_label), decision);
+    return row;
+  }));
+}
+
+async function refreshHistory() {
+  const request = ++historyRequest;
+  try {
+    const response = await fetch("/api/history");
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error);
+    if (request === historyRequest) renderHistory(data.entries);
+  } catch (error) {
+    if (request !== historyRequest) return;
+    $("history-message").textContent = "Не вдалося завантажити історію. Онови сторінку.";
+    $("history-message").hidden = false;
+  }
+}
+
+function historyBackLink() {
+  const link = node("a", "До історії перевірок", "report-meta");
+  link.href = "#history";
+  return link;
+}
+
+async function openHistory(entryId) {
+  if (busy) return;
+  setBusy(true);
+  $("history").setAttribute("aria-busy", "true");
+  try {
+    const response = await fetch("/api/history/" + entryId);
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Не вдалося відкрити перевірку.");
+    if (data.report) renderReport(data.report, data.entry);
+    else renderHistorySummary(data.entry);
+    $("history-message").hidden = true;
+    $("report-head").tabIndex = -1;
+    $("report-head").focus({preventScroll: true});
+  } catch (error) {
+    $("history-message").textContent = error.message;
+    $("history-message").hidden = false;
+  } finally {
+    $("history").removeAttribute("aria-busy");
+    setBusy(false);
+  }
+}
+
+function renderHistorySummary(entry) {
+  report = null;
+  $("report").dataset.route = entry.route;
+  $("report").hidden = false;
+  $("report-grid").hidden = true;
+  const head = $("report-head");
+  head.replaceChildren(
+    pill(entry.route_label, entry.route),
+    node("h2", entry.company || "Назву не встановлено"),
+    node("p", [entry.code && "ЄДРПОУ " + entry.code, entry.mode_label, entry.check_date, entry.rule_version].filter(Boolean).join(" · "), "report-meta"),
+    node("p", "Детальний звіт для цієї перевірки ще не зберігався.", "report-meta"),
+  );
+  if (entry.decision) head.append(node("p", [actions[entry.decision], entry.comment].filter(Boolean).join(" · "), "report-meta"));
+  head.append(historyBackLink());
+  head.scrollIntoView({block: "start"});
+}
+
+function renderReport(data, entry = null) {
   report = data;
   $("report").dataset.route = data.route;
   $("report").hidden = false;
+  $("report-grid").hidden = false;
   const name = data.fields.name.findings.length ? data.fields.name.findings[0].value : "Виписка потребує уточнення";
   const code = data.fields.code.findings.map((item) => item.value).join(" / ");
   const head = $("report-head");
@@ -135,6 +220,11 @@ function renderReport(data) {
   head.append(node("p", facts.join(" · "), "report-meta"));
   const versions = [data.mode_label, data.check_date, data.rule_version ? "Правила " + data.rule_version : "Версія правил відсутня", data.model, data.prompt_version ? "Промпт " + data.prompt_version : null, "Схема " + data.schema_version].filter(Boolean);
   head.append(node("p", versions.join(" · "), "report-meta"));
+  if (entry) {
+    head.append(node("p", "Запис від " + historyDate.format(new Date(entry.created_at)), "report-meta"));
+    if (entry.restored_at) head.append(node("p", "Деталі відновлено повторною перевіркою PDF.", "report-meta"));
+  }
+  head.append(historyBackLink());
   if (data.reasons.length) {
     const reasons = node("ul", "", "reasons");
     reasons.append(...data.reasons.map((reason) => node("li", reason.label)));
@@ -163,19 +253,19 @@ function renderReport(data) {
     button.addEventListener("click", () => setPage(page.number));
     return button;
   }));
-  const permitted = data.route === "STANDARD" ? ["next", "request", "escalate"] : data.route === "ESCALATE" ? ["escalate"] : ["request", "escalate"];
-  $("decision-options").replaceChildren(...permitted.map((action, index) => {
+  $("decision-options").replaceChildren(...data.permitted_actions.map((action, index) => {
     const label = node("label");
     const radio = node("input");
     radio.type = "radio";
     radio.name = "decision";
     radio.value = action;
-    radio.checked = index === 0;
+    radio.checked = entry && entry.decision ? entry.decision === action : index === 0;
     label.append(radio, document.createTextNode(actions[action]));
     return label;
   }));
-  $("comment").value = "";
-  $("decision-feedback").textContent = "";
+  $("comment").value = entry && entry.comment ? entry.comment : "";
+  $("decision-feedback").textContent = entry && entry.decision ? "Збережено в історії · " + actions[entry.decision] : "";
+  $("decision-feedback").classList.remove("error");
   setPage(1);
   head.scrollIntoView({block: "start"});
 }
@@ -202,6 +292,7 @@ async function run(payload) {
     if (!response.ok) throw new Error(data.error || "Не вдалося завершити перевірку.");
     renderReport(data);
     showMessage("");
+    await refreshHistory();
   } catch (error) {
     showMessage(error.message, true);
   } finally {
@@ -225,15 +316,38 @@ $("entry").addEventListener("submit", async (event) => {
   }
 });
 
-$("decision").addEventListener("submit", (event) => {
+$("decision").addEventListener("submit", async (event) => {
   event.preventDefault();
+  if (busy || !report) return;
+  const button = event.currentTarget.querySelector("button[type=submit]");
+  if (button.disabled) return;
+  const historyId = report.history_id;
   const decision = new FormData(event.currentTarget).get("decision");
   const comment = $("comment").value.trim();
-  const extra = comment ? " · " + comment : "";
-  $("decision-feedback").textContent = "Зафіксовано в поточному перегляді · " + actions[decision] + extra;
+  const feedback = $("decision-feedback");
+  button.disabled = true;
+  feedback.classList.remove("error");
+  try {
+    const response = await fetch("/api/decision", {
+      method: "POST", headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({history_id: historyId, decision, comment}),
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Не вдалося зберегти дію.");
+    if (report.history_id === historyId) feedback.textContent = "Збережено в історії · " + actions[decision];
+    await refreshHistory();
+  } catch (error) {
+    if (report.history_id !== historyId) return;
+    feedback.textContent = error.message;
+    feedback.classList.add("error");
+  } finally {
+    button.disabled = false;
+  }
 });
 
 $("mode").addEventListener("change", () => { $("live-note").hidden = $("mode").value !== "live"; });
+
+refreshHistory();
 
 fetch("/api/config").then((response) => response.json()).then((config) => {
   const mode = $("mode").querySelector("[value=live]");
