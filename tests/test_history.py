@@ -48,6 +48,8 @@ class HistoryTest(unittest.TestCase):
                 history.save_decision(entry, "next", "")
             with self.assertRaises(LookupError):
                 history.save_decision(entry + 1, "request", "")
+            with self.assertRaisesRegex(ValueError, "ID"):
+                history.save_decision(2**70, "request", "")
             self.assertIsNone(history.entries()[0]["decision"])
 
 

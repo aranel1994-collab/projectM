@@ -9,13 +9,14 @@ const node = (tag, text, className) => {
 };
 
 const ruleStates = {
-  PASS: "Перевірено", REVIEW: "Потрібна перевірка", FAIL: "Виявлено суперечність",
+  PASS: "Перевірено", REVIEW: "Потрібна перевірка", FAIL: "Виявлено проблему",
   NOT_APPLICABLE: "Не застосовується", NOT_CHECKED: "Не перевірено",
 };
 const fieldStates = {
   present: "Знайдено", section_absent: "Розділу немає", empty: "Поле порожнє",
   explicit_absent: "Відомості відсутні", unreadable: "Не прочитано", ungrounded: "Доказ не підтверджено",
   conflicting: "Суперечливі значення", scan: "Прочитано зі скану",
+  text_model: "Знайдено моделлю, шаблон не підтверджено",
 };
 const actions = {
   next: "Передати далі", request: "Запросити документ", escalate: "Ескалація",
@@ -75,7 +76,7 @@ function setPage(number, evidence, button) {
 }
 
 function proofButton(evidence, index, total) {
-  const description = evidence.source === "scan" ? "Зображення" : "Доказ";
+  const description = {scan: "Зображення", text_model: "Цитата моделі"}[evidence.source] || "Доказ";
   const suffix = total > 1 ? " · " + (index + 1) : "";
   const button = node("button", description + " · с. " + evidence.page + suffix, "proof");
   button.type = "button";
@@ -88,7 +89,8 @@ function proofButton(evidence, index, total) {
 function renderFact(field) {
   const fact = node("article", "", "fact");
   const title = node("div", "", "fact-title");
-  title.append(node("h3", field.label), pill(fieldStates[field.state], field.state === "present" ? "pass" : field.state === "conflicting" ? "fail" : "other"));
+  const state = report.mode === "replay" && field.state === "scan" ? "Підготовлені дані зі скану" : fieldStates[field.state];
+  title.append(node("h3", field.label), pill(state, field.state === "present" ? "pass" : field.state === "conflicting" ? "fail" : "other"));
   fact.append(title);
   field.findings.forEach((item, index) => {
     fact.append(node("p", item.value), proofButton({...item, label: field.label}, index, field.findings.length));
