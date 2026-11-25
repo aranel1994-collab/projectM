@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Попередня перевірка виписки з ЄДР</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap top-inner"><a href="/" class="brand">Фінмоніторинг</a><span class="top-note">Прототип для mono</span></div>
+  </header>
+  <main class="wrap">
+    <section aria-labelledby="heading" class="intro">
+      <h1 id="heading">Попередня перевірка виписки з ЄДР</h1>
+      <p>Відомості з PDF, докази на сторінках і наступні дії для онбордингу.</p>
+    </section>
+    <form id="entry" class="entry card">
+      <div class="form-row">
+        <label>Виписка з ЄДР <small>PDF, до 8 МБ</small><input type="file" id="file" accept=".pdf,application/pdf"></label>
+        <label>Заявлений ЄДРПОУ <small>необов’язково</small><input type="text" id="code" inputmode="numeric" pattern="[0-9]{8}" maxlength="8" placeholder="8 цифр"></label>
+        <label>Режим<select id="mode"><option value="local">Локальне читання</option><option value="replay">Відтворення прикладу</option><option value="live">Живий виклик моделі</option></select></label>
+        <button id="submit" class="button primary" type="submit">Перевірити PDF</button>
+      </div>
+      <p id="live-note" class="date-settings" hidden>У живому режимі сторінки надсилаються провайдеру моделі. Для демо використовуйте вигадані дані.</p>
+      <details class="date-settings"><summary>Дата перевірки</summary><label>Дата<input type="date" id="date"></label></details>
+    </form>
+    <section id="examples" class="examples" aria-labelledby="examples-heading">
+      <div class="section-top"><h2 id="examples-heading">Приклади для демо</h2><span>Вигадані дані</span></div>
+      <div id="main-examples" class="example-grid"></div>
+      <details class="extra-examples"><summary>Інші тестові сценарії</summary><div id="more-examples" class="example-grid"></div></details>
+    </section>
+    <div id="message" class="message" role="status" aria-live="polite"></div>
+    <section id="report" aria-label="Звіт перевірки" hidden>
+      <div id="report-head" class="report-head card"></div>
+      <div class="report-grid">
+        <div class="report-details">
+          <section class="card section-card"><h2>Дані з виписки</h2><div id="facts"></div></section>
+          <section class="card section-card"><h2>Перевірки за PDF</h2><div id="checks"></div></section>
+          <section class="card section-card"><h2>Подальші перевірки</h2><div id="next"></div></section>
+          <section class="card section-card"><h2>Дія працівника</h2><form id="decision"><div id="decision-options" class="decision-options"></div><label>Коментар<input id="comment" maxlength="240" placeholder="За потреби"></label><button type="submit" class="button primary">Зафіксувати дію</button><p id="decision-feedback" role="status"></p></form></section>
+        </div>
+        <aside class="card pdf-card" aria-label="Сторінки PDF">
+          <div class="section-top"><h2>Документ</h2><span id="view-kind"></span></div>
+          <div id="pager" class="pager" aria-label="Вибір сторінки"></div>
+          <div class="pdf-background"><div class="sheet"><img id="sheet" alt="Сторінка завантаженої виписки"><div id="marks" aria-hidden="true"></div></div></div>
+          <p id="active-proof" class="active-proof" aria-live="polite">Обери доказ у звіті, щоб перейти до фрагмента.</p>
+        </aside>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
