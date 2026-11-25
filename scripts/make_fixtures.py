@@ -36,6 +36,8 @@ SCENARIOS = [
     ("scan", "Скан виписки", "Дані на двох сторінках-зображеннях.", CODE, "MANUAL_REVIEW"),
     ("mixed", "Змішаний PDF", "Перша сторінка — зображення, друга — текст.", CODE, "MANUAL_REVIEW"),
     ("document-note", "Стороння примітка", "Фраза в PDF про бажаний маршрут не змінює результату.", CODE, "STANDARD"),
+    ("terminated", "Компанія припинена", "У виписці зазначено стан «припинено».", CODE, "ESCALATE"),
+    ("terminating", "У процесі припинення", "У виписці є окремий розділ про процес припинення.", CODE, "MANUAL_REVIEW"),
 ]
 
 
@@ -108,6 +110,10 @@ def make_source(scenario):
     y = block(page, "Місцезнаходження юридичної особи:", ADDRESS, y)
     y = block(page, "Дата та номер запису в Єдиному державному реєстрі юридичних осіб, фізичних осіб-підприємців та громадських формувань:", f"{REGISTRATION_DATE}, {REGISTRATION_NUMBER}", y)
     y = block(page, "Прізвище, ім’я та по батькові осіб, які мають право вчиняти юридичні дії від імені юридичної особи:", NAME, y)
+    if scenario == "terminating":
+        y = block(page, "Дані про перебування юридичної особи в процесі припинення:", "01.02.2026, рішення засновників про припинення", y)
+    else:
+        y = block(page, "Стан юридичної особи:", "припинено" if scenario == "terminated" else "зареєстровано", y)
     if scenario in {"founder", "missing-ubo"}:
         y = block(page, "Відомості про засновників (учасників):", "ТОВ «Демонстраційний учасник», частка 100%", y)
         if scenario == "founder":
@@ -168,7 +174,10 @@ def main():
                 **({"code": CODE} if key not in {"conflict", "founder"} else {}),
             },
             "route": route,
-            "forbidden_pass": ["DOC-02"] if key in {"conflict", "founder", "scan", "mixed"} else [],
+            "forbidden_pass": (
+                ["DOC-02"] if key in {"conflict", "founder", "scan", "mixed"}
+                else ["DOC-08"] if key in {"terminated", "terminating"} else []
+            ),
         }
     for path, obj in [(OUT / "replay.json", records), (OUT / "examples.json", manifest), (ROOT / "eval" / "synthetic.json", gold)]:
         path.write_text(json.dumps(obj, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
