@@ -1,0 +1,66 @@
+[
+  {
+    "id": "standard",
+    "title": "Стандартна обробка",
+    "description": "Текстова виписка з підтвердженим кодом компанії.",
+    "pdf": "standard",
+    "claimed_code": "00073142",
+    "expected_route": "STANDARD"
+  },
+  {
+    "id": "mismatch",
+    "title": "Інша компанія в заявці",
+    "description": "Код із заявки відрізняється від коду в документі.",
+    "pdf": "standard",
+    "claimed_code": "00170934",
+    "expected_route": "MANUAL_REVIEW"
+  },
+  {
+    "id": "conflict",
+    "title": "Два коди компанії",
+    "description": "Два різні значення наведено як код самої компанії.",
+    "pdf": "conflict",
+    "claimed_code": "00073142",
+    "expected_route": "ESCALATE"
+  },
+  {
+    "id": "founder",
+    "title": "Код засновника",
+    "description": "Власного коду компанії в її розділі бракує.",
+    "pdf": "founder",
+    "claimed_code": "",
+    "expected_route": "MANUAL_REVIEW"
+  },
+  {
+    "id": "missing-ubo",
+    "title": "Відсутні відомості про КБВ",
+    "description": "Форма містить явну відмітку про відсутність відомостей.",
+    "pdf": "missing-ubo",
+    "claimed_code": "00073142",
+    "expected_route": "MANUAL_REVIEW"
+  },
+  {
+    "id": "scan",
+    "title": "Скан виписки",
+    "description": "Дані на двох сторінках-зображеннях.",
+    "pdf": "scan",
+    "claimed_code": "00073142",
+    "expected_route": "MANUAL_REVIEW"
+  },
+  {
+    "id": "mixed",
+    "title": "Змішаний PDF",
+    "description": "Перша сторінка — зображення, друга — текст.",
+    "pdf": "mixed",
+    "claimed_code": "00073142",
+    "expected_route": "MANUAL_REVIEW"
+  },
+  {
+    "id": "document-note",
+    "title": "Стороння примітка",
+    "description": "Фраза в PDF про бажаний маршрут не змінює результату.",
+    "pdf": "document-note",
+    "claimed_code": "00073142",
+    "expected_route": "STANDARD"
+  }
+]

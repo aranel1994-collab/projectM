@@ -1,0 +1,677 @@
+{
+  "12cdbdfc989e38f89a2973b84aa0e51749be7fffdb5a4187efc0ea947004202a": {
+    "name": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "ТОВАРИСТВО З ОБМЕЖЕНОЮ ВІДПОВІДАЛЬНІСТЮ «СВІТЛО РІЧКИ ДЕМО»",
+          "page": 1,
+          "fragment": "ТОВАРИСТВО З ОБМЕЖЕНОЮ ВІДПОВІДАЛЬНІСТЮ «СВІТЛО РІЧКИ ДЕМО»"
+        }
+      ]
+    },
+    "code": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "00073142",
+          "page": 1,
+          "fragment": "00073142"
+        }
+      ]
+    },
+    "address": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "01000, Україна, м. Київ, вул. Умовна, будинок 17, офіс 8",
+          "page": 1,
+          "fragment": "01000, Україна, м. Київ, вул. Умовна, будинок 17, офіс 8"
+        }
+      ]
+    },
+    "registration_date": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "12.05.2025",
+          "page": 1,
+          "fragment": "12.05.2025"
+        }
+      ]
+    },
+    "registration_number": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "1000000000000123456",
+          "page": 1,
+          "fragment": "1000000000000123456"
+        }
+      ]
+    },
+    "management": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "Прикладенко Марта Тестівна — директор, без зазначених обмежень",
+          "page": 1,
+          "fragment": "Прикладенко Марта Тестівна — директор, без зазначених обмежень"
+        }
+      ]
+    },
+    "issued_date": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "30.06.2025",
+          "page": 2,
+          "fragment": "30.06.2025"
+        }
+      ]
+    },
+    "owners": {
+      "state": "section_absent",
+      "findings": []
+    },
+    "ubo": {
+      "state": "section_absent",
+      "findings": []
+    },
+    "company_status": {
+      "state": "section_absent",
+      "findings": []
+    },
+    "activities": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "62.01 Комп’ютерне програмування (основний)",
+          "page": 1,
+          "fragment": "62.01 Комп’ютерне програмування (основний)"
+        }
+      ]
+    }
+  },
+  "50f75ce901d57ec3e3d12a224251e8ed2fe7028a0d248df066d43b90e6d86b89": {
+    "name": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "ТОВАРИСТВО З ОБМЕЖЕНОЮ ВІДПОВІДАЛЬНІСТЮ «СВІТЛО РІЧКИ ДЕМО»",
+          "page": 1,
+          "fragment": "ТОВАРИСТВО З ОБМЕЖЕНОЮ ВІДПОВІДАЛЬНІСТЮ «СВІТЛО РІЧКИ ДЕМО»"
+        }
+      ]
+    },
+    "code": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "00073142",
+          "page": 1,
+          "fragment": "00073142"
+        },
+        {
+          "value": "00081329",
+          "page": 1,
+          "fragment": "00081329"
+        }
+      ]
+    },
+    "address": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "01000, Україна, м. Київ, вул. Умовна, будинок 17, офіс 8",
+          "page": 1,
+          "fragment": "01000, Україна, м. Київ, вул. Умовна, будинок 17, офіс 8"
+        }
+      ]
+    },
+    "registration_date": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "12.05.2025",
+          "page": 1,
+          "fragment": "12.05.2025"
+        }
+      ]
+    },
+    "registration_number": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "1000000000000123456",
+          "page": 1,
+          "fragment": "1000000000000123456"
+        }
+      ]
+    },
+    "management": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "Прикладенко Марта Тестівна — директор, без зазначених обмежень",
+          "page": 1,
+          "fragment": "Прикладенко Марта Тестівна — директор, без зазначених обмежень"
+        }
+      ]
+    },
+    "issued_date": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "30.06.2025",
+          "page": 2,
+          "fragment": "30.06.2025"
+        }
+      ]
+    },
+    "owners": {
+      "state": "section_absent",
+      "findings": []
+    },
+    "ubo": {
+      "state": "section_absent",
+      "findings": []
+    },
+    "company_status": {
+      "state": "section_absent",
+      "findings": []
+    },
+    "activities": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "62.01 Комп’ютерне програмування (основний)",
+          "page": 1,
+          "fragment": "62.01 Комп’ютерне програмування (основний)"
+        }
+      ]
+    }
+  },
+  "4f78f64ab628f7e7661a9553137ff724bc8d9f1ad93504f11b176246f00a36a0": {
+    "name": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "ТОВАРИСТВО З ОБМЕЖЕНОЮ ВІДПОВІДАЛЬНІСТЮ «СВІТЛО РІЧКИ ДЕМО»",
+          "page": 1,
+          "fragment": "ТОВАРИСТВО З ОБМЕЖЕНОЮ ВІДПОВІДАЛЬНІСТЮ «СВІТЛО РІЧКИ ДЕМО»"
+        }
+      ]
+    },
+    "code": {
+      "state": "empty",
+      "findings": []
+    },
+    "address": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "01000, Україна, м. Київ, вул. Умовна, будинок 17, офіс 8",
+          "page": 1,
+          "fragment": "01000, Україна, м. Київ, вул. Умовна, будинок 17, офіс 8"
+        }
+      ]
+    },
+    "registration_date": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "12.05.2025",
+          "page": 1,
+          "fragment": "12.05.2025"
+        }
+      ]
+    },
+    "registration_number": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "1000000000000123456",
+          "page": 1,
+          "fragment": "1000000000000123456"
+        }
+      ]
+    },
+    "management": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "Прикладенко Марта Тестівна — директор, без зазначених обмежень",
+          "page": 1,
+          "fragment": "Прикладенко Марта Тестівна — директор, без зазначених обмежень"
+        }
+      ]
+    },
+    "issued_date": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "30.06.2025",
+          "page": 2,
+          "fragment": "30.06.2025"
+        }
+      ]
+    },
+    "owners": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "ТОВ «Демонстраційний учасник», частка 100%",
+          "page": 1,
+          "fragment": "ТОВ «Демонстраційний учасник», частка 100%"
+        }
+      ]
+    },
+    "ubo": {
+      "state": "section_absent",
+      "findings": []
+    },
+    "company_status": {
+      "state": "section_absent",
+      "findings": []
+    },
+    "activities": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "62.01 Комп’ютерне програмування (основний)",
+          "page": 1,
+          "fragment": "62.01 Комп’ютерне програмування (основний)"
+        }
+      ]
+    }
+  },
+  "4a248d12cbb1f3abd905ca8dd6d8ef9bf3cabaf2eb2321405c16a9b5f8b49053": {
+    "name": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "ТОВАРИСТВО З ОБМЕЖЕНОЮ ВІДПОВІДАЛЬНІСТЮ «СВІТЛО РІЧКИ ДЕМО»",
+          "page": 1,
+          "fragment": "ТОВАРИСТВО З ОБМЕЖЕНОЮ ВІДПОВІДАЛЬНІСТЮ «СВІТЛО РІЧКИ ДЕМО»"
+        }
+      ]
+    },
+    "code": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "00073142",
+          "page": 1,
+          "fragment": "00073142"
+        }
+      ]
+    },
+    "address": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "01000, Україна, м. Київ, вул. Умовна, будинок 17, офіс 8",
+          "page": 1,
+          "fragment": "01000, Україна, м. Київ, вул. Умовна, будинок 17, офіс 8"
+        }
+      ]
+    },
+    "registration_date": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "12.05.2025",
+          "page": 1,
+          "fragment": "12.05.2025"
+        }
+      ]
+    },
+    "registration_number": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "1000000000000123456",
+          "page": 1,
+          "fragment": "1000000000000123456"
+        }
+      ]
+    },
+    "management": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "Прикладенко Марта Тестівна — директор, без зазначених обмежень",
+          "page": 1,
+          "fragment": "Прикладенко Марта Тестівна — директор, без зазначених обмежень"
+        }
+      ]
+    },
+    "issued_date": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "30.06.2025",
+          "page": 2,
+          "fragment": "30.06.2025"
+        }
+      ]
+    },
+    "owners": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "ТОВ «Демонстраційний учасник», частка 100%",
+          "page": 1,
+          "fragment": "ТОВ «Демонстраційний учасник», частка 100%"
+        }
+      ]
+    },
+    "ubo": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "Відомості відсутні",
+          "page": 1,
+          "fragment": "Відомості відсутні"
+        }
+      ]
+    },
+    "company_status": {
+      "state": "section_absent",
+      "findings": []
+    },
+    "activities": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "62.01 Комп’ютерне програмування (основний)",
+          "page": 1,
+          "fragment": "62.01 Комп’ютерне програмування (основний)"
+        }
+      ]
+    }
+  },
+  "60ae63b78ce42043d1c412f2dcc244a5d0f7c44592dccd7f82ce063b78099c38": {
+    "name": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "ТОВАРИСТВО З ОБМЕЖЕНОЮ ВІДПОВІДАЛЬНІСТЮ «СВІТЛО РІЧКИ ДЕМО»",
+          "page": 1,
+          "fragment": "ТОВАРИСТВО З ОБМЕЖЕНОЮ ВІДПОВІДАЛЬНІСТЮ «СВІТЛО РІЧКИ ДЕМО»"
+        }
+      ]
+    },
+    "code": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "00073142",
+          "page": 1,
+          "fragment": "00073142"
+        }
+      ]
+    },
+    "address": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "01000, Україна, м. Київ, вул. Умовна, будинок 17, офіс 8",
+          "page": 1,
+          "fragment": "01000, Україна, м. Київ, вул. Умовна, будинок 17, офіс 8"
+        }
+      ]
+    },
+    "registration_date": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "12.05.2025",
+          "page": 1,
+          "fragment": "12.05.2025"
+        }
+      ]
+    },
+    "registration_number": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "1000000000000123456",
+          "page": 1,
+          "fragment": "1000000000000123456"
+        }
+      ]
+    },
+    "management": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "Прикладенко Марта Тестівна — директор, без зазначених обмежень",
+          "page": 1,
+          "fragment": "Прикладенко Марта Тестівна — директор, без зазначених обмежень"
+        }
+      ]
+    },
+    "issued_date": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "30.06.2025",
+          "page": 2,
+          "fragment": "30.06.2025"
+        }
+      ]
+    },
+    "owners": {
+      "state": "section_absent",
+      "findings": []
+    },
+    "ubo": {
+      "state": "section_absent",
+      "findings": []
+    },
+    "company_status": {
+      "state": "section_absent",
+      "findings": []
+    },
+    "activities": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "62.01 Комп’ютерне програмування (основний)",
+          "page": 1,
+          "fragment": "62.01 Комп’ютерне програмування (основний)"
+        }
+      ]
+    }
+  },
+  "5b6f2baed9c16dad6a0f22ade73879eabadfbf9553192d78e198d13f1159a405": {
+    "name": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "ТОВАРИСТВО З ОБМЕЖЕНОЮ ВІДПОВІДАЛЬНІСТЮ «СВІТЛО РІЧКИ ДЕМО»",
+          "page": 1,
+          "fragment": "ТОВАРИСТВО З ОБМЕЖЕНОЮ ВІДПОВІДАЛЬНІСТЮ «СВІТЛО РІЧКИ ДЕМО»"
+        }
+      ]
+    },
+    "code": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "00073142",
+          "page": 1,
+          "fragment": "00073142"
+        }
+      ]
+    },
+    "address": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "01000, Україна, м. Київ, вул. Умовна, будинок 17, офіс 8",
+          "page": 1,
+          "fragment": "01000, Україна, м. Київ, вул. Умовна, будинок 17, офіс 8"
+        }
+      ]
+    },
+    "registration_date": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "12.05.2025",
+          "page": 1,
+          "fragment": "12.05.2025"
+        }
+      ]
+    },
+    "registration_number": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "1000000000000123456",
+          "page": 1,
+          "fragment": "1000000000000123456"
+        }
+      ]
+    },
+    "management": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "Прикладенко Марта Тестівна — директор, без зазначених обмежень",
+          "page": 1,
+          "fragment": "Прикладенко Марта Тестівна — директор, без зазначених обмежень"
+        }
+      ]
+    },
+    "issued_date": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "30.06.2025",
+          "page": 2,
+          "fragment": "30.06.2025"
+        }
+      ]
+    },
+    "owners": {
+      "state": "section_absent",
+      "findings": []
+    },
+    "ubo": {
+      "state": "section_absent",
+      "findings": []
+    },
+    "company_status": {
+      "state": "section_absent",
+      "findings": []
+    },
+    "activities": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "62.01 Комп’ютерне програмування (основний)",
+          "page": 1,
+          "fragment": "62.01 Комп’ютерне програмування (основний)"
+        }
+      ]
+    }
+  },
+  "8baafb05bfda8dcaf02dd724dd73f5c086d4004ad23e9ad2dd1114c81c81302b": {
+    "name": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "ТОВАРИСТВО З ОБМЕЖЕНОЮ ВІДПОВІДАЛЬНІСТЮ «СВІТЛО РІЧКИ ДЕМО»",
+          "page": 1,
+          "fragment": "ТОВАРИСТВО З ОБМЕЖЕНОЮ ВІДПОВІДАЛЬНІСТЮ «СВІТЛО РІЧКИ ДЕМО»"
+        }
+      ]
+    },
+    "code": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "00073142",
+          "page": 1,
+          "fragment": "00073142"
+        }
+      ]
+    },
+    "address": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "01000, Україна, м. Київ, вул. Умовна, будинок 17, офіс 8",
+          "page": 1,
+          "fragment": "01000, Україна, м. Київ, вул. Умовна, будинок 17, офіс 8"
+        }
+      ]
+    },
+    "registration_date": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "12.05.2025",
+          "page": 1,
+          "fragment": "12.05.2025"
+        }
+      ]
+    },
+    "registration_number": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "1000000000000123456",
+          "page": 1,
+          "fragment": "1000000000000123456"
+        }
+      ]
+    },
+    "management": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "Прикладенко Марта Тестівна — директор, без зазначених обмежень",
+          "page": 1,
+          "fragment": "Прикладенко Марта Тестівна — директор, без зазначених обмежень"
+        }
+      ]
+    },
+    "issued_date": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "30.06.2025",
+          "page": 2,
+          "fragment": "30.06.2025"
+        }
+      ]
+    },
+    "owners": {
+      "state": "section_absent",
+      "findings": []
+    },
+    "ubo": {
+      "state": "section_absent",
+      "findings": []
+    },
+    "company_status": {
+      "state": "section_absent",
+      "findings": []
+    },
+    "activities": {
+      "state": "present",
+      "findings": [
+        {
+          "value": "62.01 Комп’ютерне програмування (основний)",
+          "page": 1,
+          "fragment": "62.01 Комп’ютерне програмування (основний)"
+        }
+      ]
+    }
+  }
+}
