@@ -23,7 +23,7 @@ a { color: var(--green); }
 .topbar { background: var(--dark); color: white; }
 .top-inner { height: 58px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .brand { color: white; text-decoration: none; font-weight: 720; letter-spacing: .005em; }
-.top-note { color: #d1e9df; font-size: .86rem; }
+.top-note { color: #d1e9df; font-size: .86rem; text-underline-offset: .2em; }
 main { padding: 35px 0 64px; }
 .intro h1 { font-size: clamp(1.92rem, 4vw, 3rem); line-height: 1.08; letter-spacing: -.055em; margin: 0; }
 .intro p { color: var(--muted); margin: 12px 0 23px; }
@@ -90,6 +90,18 @@ button:disabled { opacity: .5; cursor: wait; }
 .decision-options label { display: inline-flex; align-items: center; gap: 5px; }
 #decision > button { margin-top: 9px; }
 #decision-feedback { margin: 6px 0 0; color: var(--green); font-size: .88rem; }
+#decision-feedback.error { color: #842920; }
+.history { margin-top: 18px; scroll-margin-top: 12px; }
+.history-table { overflow-x: auto; }
+.history table { border-collapse: collapse; width: 100%; min-width: 660px; font-size: .86rem; }
+.history th, .history td { text-align: left; vertical-align: top; padding: 10px 12px; border-top: 1px solid var(--line); }
+.history th { background: var(--base); color: var(--muted); white-space: nowrap; }
+.history td:first-child { white-space: nowrap; }
+.history td { overflow-wrap: anywhere; }
+.history td small { display: block; margin-top: 4px; color: var(--muted); }
+.history tbody tr { cursor: pointer; }
+.history tbody tr:hover, .history tbody tr:focus-within { background: #eff8f1; }
+.history-company { border: 0; padding: 0; background: transparent; color: var(--green); text-align: left; text-decoration: underline; text-underline-offset: .18em; overflow-wrap: anywhere; }
 @media (max-width: 920px) {
   .form-row { grid-template-columns: 1fr 1fr; }
   .form-row > button { width: 100%; }

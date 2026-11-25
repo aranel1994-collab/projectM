@@ -1,4 +1,4 @@
-"""Вебдемо одного запуску. Завантаження тримаються в пам’яті запиту."""
+"""Вебдемо з локальною історією. PDF обробляються в пам’яті запиту."""
 
 import argparse
 import base64
@@ -7,15 +7,20 @@ from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
 from pathlib import Path
+import re
+import sqlite3
+import zlib
 from urllib.parse import urlparse
 
 from .analysis import analyze
 from .extraction import ExtractionError, api_key
+from .history import ACTIONS_BY_ROUTE, History
 from .pdf import DocumentError, MAX_BYTES
 
 
 ROOT = Path(__file__).resolve().parent.parent
 WEB = Path(__file__).with_name("web")
+HISTORY_DB = ROOT / "private" / "history.sqlite3"
 ASSETS = {
     "/": ("index.html", "text/html; charset=utf-8"),
     "/style.css": ("style.css", "text/css; charset=utf-8"),
@@ -47,8 +52,20 @@ class Handler(BaseHTTPRequestHandler):
     def log_message(self, format_string, *arguments):
         pass  # Документи, імена файлів і параметри кейсів не потрапляють у лог.
 
+    def history_details(self, entry_id):
+        try:
+            entry, report = self.server.history.details(entry_id)
+        except LookupError as error:
+            self.send_json(HTTPStatus.NOT_FOUND, {"error": str(error)})
+            return
+        except (ValueError, sqlite3.Error, zlib.error):
+            self.send_json(HTTPStatus.INTERNAL_SERVER_ERROR, {"error": "Не вдалося прочитати збережений звіт."})
+            return
+        self.send_json(HTTPStatus.OK, {"entry": entry, "report": report})
+
     def do_GET(self):
         path = urlparse(self.path).path
+        history_match = re.fullmatch(r"/api/history/([1-9][0-9]{0,17})", path)
         if path in ASSETS:
             file, media_type = ASSETS[path]
             self.send_content(HTTPStatus.OK, (WEB / file).read_bytes(), media_type)
@@ -56,11 +73,19 @@ class Handler(BaseHTTPRequestHandler):
             self.send_content(HTTPStatus.NO_CONTENT, b"", "image/x-icon")
         elif path == "/api/config":
             self.send_json(HTTPStatus.OK, {"examples": examples(), "live_available": bool(api_key())})
+        elif history_match:
+            self.history_details(int(history_match[1]))
+        elif path == "/api/history":
+            try:
+                self.send_json(HTTPStatus.OK, {"entries": self.server.history.entries()})
+            except sqlite3.Error:
+                self.send_json(HTTPStatus.INTERNAL_SERVER_ERROR, {"error": "Не вдалося прочитати історію."})
         else:
             self.send_json(HTTPStatus.NOT_FOUND, {"error": "Сторінку не знайдено."})
 
     def do_POST(self):
-        if urlparse(self.path).path != "/api/analyze":
+        path = urlparse(self.path).path
+        if path not in {"/api/analyze", "/api/decision"}:
             self.send_json(HTTPStatus.NOT_FOUND, {"error": "Сторінку не знайдено."})
             return
         if self.headers.get_content_type() != "application/json":
@@ -73,6 +98,15 @@ class Handler(BaseHTTPRequestHandler):
             body = json.loads(self.rfile.read(size))
             if not isinstance(body, dict):
                 raise DocumentError("Некоректні параметри запиту.")
+            if path == "/api/decision":
+                try:
+                    self.server.history.save_decision(body.get("history_id"), body.get("decision"), body.get("comment", ""))
+                except (LookupError, ValueError) as error:
+                    status = HTTPStatus.NOT_FOUND if isinstance(error, LookupError) else HTTPStatus.UNPROCESSABLE_ENTITY
+                    self.send_json(status, {"error": str(error)})
+                    return
+                self.send_json(HTTPStatus.OK, {"saved": True})
+                return
             mode = body.get("mode", "local")
             if not isinstance(mode, str):
                 raise DocumentError("Виберіть доступний режим запуску.")
@@ -84,6 +118,11 @@ class Handler(BaseHTTPRequestHandler):
             else:
                 data = base64.b64decode(body.get("pdf", ""), validate=True)
             report = analyze(data, mode, body.get("claimed_code", ""), body.get("date"))
+            report["history_id"] = self.server.history.record(report)
+            report["permitted_actions"] = ACTIONS_BY_ROUTE[report["route"]]
+        except sqlite3.Error:
+            self.send_json(HTTPStatus.INTERNAL_SERVER_ERROR, {"error": "Не вдалося зберегти запис в історії."})
+            return
         except (DocumentError, ExtractionError) as error:
             self.send_json(HTTPStatus.UNPROCESSABLE_ENTITY, {"error": str(error)})
             return
@@ -99,8 +138,11 @@ class Handler(BaseHTTPRequestHandler):
 def main():
     parser = argparse.ArgumentParser(description="Демо попередньої перевірки виписки з ЄДР.")
     parser.add_argument("--port", type=int, default=8765)
+    parser.add_argument("--history-db", type=Path, default=HISTORY_DB, help="Шлях до локальної бази історії.")
     args = parser.parse_args()
+    history = History(args.history_db)
     with ThreadingHTTPServer(("127.0.0.1", args.port), Handler) as server:
+        server.history = history
         print(f"Демо відкривається за адресою http://127.0.0.1:{args.port}", flush=True)
         try:
             server.serve_forever()
