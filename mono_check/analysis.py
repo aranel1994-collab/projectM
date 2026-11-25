@@ -32,8 +32,10 @@ def analyze(data, mode="local", claimed_code="", check_date=None, include_pages=
     with open_pdf(data) as document:
         pages = page_content(document)
         form, expanded, sections = sections_from(pages)
+        model = model_usage = None
         if mode == "live":
-            raw = live_findings(document, pages)
+            response = live_findings(document, pages)
+            raw, model, model_usage = response.data, response.model, response.usage
         elif mode == "replay":
             raw = replay_findings(data, len(pages))
         else:
@@ -59,6 +61,7 @@ def analyze(data, mode="local", claimed_code="", check_date=None, include_pages=
         "route": route, "route_label": ROUTES[route], "reasons": reasons, "results": results,
         "fields": fields, "pages": images, "claimed_code": claimed_code, "form": form_label,
         "check_date": check_date.isoformat(), "rule_version": version["id"] if version else None,
-        "mode": mode, "mode_label": MODE_LABELS[mode], "model": model_name() if mode == "live" else None,
+        "mode": mode, "mode_label": MODE_LABELS[mode], "model": model,
+        "requested_model": model_name() if mode == "live" else None, "model_usage": model_usage,
         "prompt_version": PROMPT_VERSION if mode == "live" else None, "schema_version": SCHEMA_VERSION,
     }

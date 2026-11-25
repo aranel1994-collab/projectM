@@ -12,6 +12,7 @@ ACTIONS_BY_ROUTE = {
     "MANUAL_REVIEW": ("request", "escalate"),
     "ESCALATE": ("escalate",),
 }
+MAX_ENTRY_ID = (1 << 63) - 1
 
 
 ENTRY_COLUMNS = """
@@ -112,7 +113,9 @@ class History:
             return updated.rowcount == 1
 
     def save_decision(self, entry_id, action, comment):
-        if type(entry_id) is not int or entry_id < 1 or not isinstance(action, str) or not isinstance(comment, str) or len(comment) > 240:
+        if type(entry_id) is not int or not 1 <= entry_id <= MAX_ENTRY_ID:
+            raise ValueError("Некоректний ID перевірки.")
+        if not isinstance(action, str) or not isinstance(comment, str) or len(comment) > 240:
             raise ValueError("Некоректні дані дії працівника.")
         with self.connect() as db:
             entry = db.execute("SELECT route FROM checks WHERE id = ?", (entry_id,)).fetchone()

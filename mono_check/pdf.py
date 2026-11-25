@@ -11,7 +11,7 @@ import fitz
 MAX_BYTES = 8 * 1024 * 1024
 MAX_PAGES = 12
 DATE = re.compile(r"(?<!\d)\d{1,2}\.\d{1,2}\.\d{4}(?!\d)")
-CODE = re.compile(r"(?<!\d)\d{8}(?!\d)")
+CODE = re.compile(r"(?<!\d)[0-9]{8}(?!\d)")
 NUMBER = re.compile(r"(?<!\d)\d[\d -]{7,32}\d(?!\d)")
 LABELS = {
     "name": r"^(?:повне )?найменування юридичної особи\s*:",
@@ -24,9 +24,18 @@ LABELS = {
     "owners": r"^(?:відомості про засновників|перелік засновників|засновники|учасники)(?:\s|:|$)",
     "ubo": r"^(?:відомості про кінцев(?:ого|их) бенефіціарн(?:ого|их) власник(?:а|ів)|кінцевий бенефіціарний власник)(?:\s|:|$)",
     "company_status": r"^(?:стан юридичної особи|статус юридичної особи)\s*:",
+    "termination": r"^(?:(?:відомості|дані) про )?(?:перебування юридичної особи в (?:процесі|стані) припинення|припинення юридичної особи)\b",
     "activities": r"^(?:(?:основний )?вид(?:и)? економічної діяльності|основний вид діяльності)(?:\s|:|$)",
     "boundary": r"^(?:відомості, отримані|дані про перебування|дані про основний|дані про взяття|органи державної|місце зберігання|назва установи|реєстратор|державний реєстратор|навчальний зразок|службова примітка)\b",
 }
+NON_COMPANY_SECTION = re.compile(
+    r"^(?:(?:відомості|дані|перелік) про )?(?:засновник|учасник|кінцев|бенефіціар|"
+    r"підписант|представник|керівник|органи управління|державн\w+ (?:реєстратор|орган)|"
+    r"реєстратор|податков\w+ |контролююч\w+ орган|держорган)"
+)
+CODE_LABEL = re.compile(r"^(?:єдрпоу|ідентифікаційний код|реєстраційний код юридичної особи)\s*:")
+ALTERNATE_NAME_LABEL = re.compile(r"^(?:повне |скорочене )?найменування\s*:")
+TEXT_HEADING = re.compile(r"^[^«»\"\d:]+:")
 FIELD_LABELS = {
     "name": "Повне найменування",
     "code": "Код ЄДРПОУ компанії",
@@ -38,9 +47,10 @@ FIELD_LABELS = {
     "owners": "Засновники й учасники",
     "ubo": "Кінцевий бенефіціарний власник (КБВ)",
     "company_status": "Стан юридичної особи",
+    "termination": "Дані про припинення",
     "activities": "Види діяльності",
 }
-ABSENT = re.compile(r"^(?:відомості (?:відсутні|не зазначені)|відсутні|відсутній|немає|не зазначено)[. ]*$", re.I)
+ABSENT = re.compile(r"^(?:(?:відомості|дані) (?:відсутні|не зазначені)|інформація відсутня|відсутні|відсутній|немає|не зазначено|-)[. ]*$", re.I)
 SPACE = re.compile(r"\s+")
 CHARACTERS = str.maketrans({"’": "'", "ʼ": "'", "‘": "'", "«": '"', "»": '"', "“": '"', "”": '"', "–": "-", "—": "-", "\u00ad": None, "\u200b": None})
 
@@ -58,6 +68,35 @@ def valid_date(value):
         return datetime.strptime(value, "%d.%m.%Y").date()
     except (TypeError, ValueError):
         return None
+
+
+def company_code_proof(pages, page_number, fragment, code):
+    """Знайти цитату біля власного коду до початку розділів інших осіб."""
+    quote = normalize(fragment)
+    for page in pages:
+        if page.kind != "text":
+            continue
+        identity = []
+        for line in page.text.splitlines():
+            normal = normalize(line)
+            if NON_COMPANY_SECTION.match(normal) or re.match(LABELS["management"], normal) or re.match(LABELS["boundary"], normal):
+                break
+            if normal:
+                identity.append(normal)
+        else:
+            if page.number < page_number:
+                continue
+        if page.number != page_number:
+            return False
+        for index, line in enumerate(identity):
+            if not (re.match(LABELS["code"], line) or CODE_LABEL.match(line)):
+                continue
+            inline = line.partition(":")[2].strip()
+            following = identity[index + 1] if index + 1 < len(identity) else ""
+            if inline == code or (not inline and following == code):
+                return quote in " ".join(identity)
+        return False
+    return False
 
 
 @dataclass
@@ -113,6 +152,7 @@ def sections_from(pages):
     sections = {}
     form = "unknown"
     expanded = False
+    company_identity = True
     for page in pages:
         if page.kind != "text":
             continue
@@ -131,6 +171,8 @@ def sections_from(pages):
         for line in lines:
             normal = normalize(line)
             key = next((field for field, pattern in LABELS.items() if re.match(pattern, normal)), None)
+            if key is None and NON_COMPANY_SECTION.match(normal) and normal.endswith(":"):
+                key = "boundary"
             if key:
                 if active_key is not None:
                     blocks.append((active_key, active))
@@ -144,19 +186,27 @@ def sections_from(pages):
             blocks.append((active_key, active))
         name_start = re.compile(r"^(?:товариство|приватне підприємство|акціонерне товариство|комунальне підприємство|громадська|благодійна|тов\s)", re.I)
         for index, line in enumerate(before_sections):
+            if ALTERNATE_NAME_LABEL.match(normalize(line)):
+                break
             if name_start.match(line):
-                company = before_sections[index:]
+                company = [line]
+                for continuation in before_sections[index + 1:]:
+                    if TEXT_HEADING.match(continuation):
+                        break
+                    company.append(continuation)
                 sections.setdefault("name", []).append(Section(page.number, company))
                 break
-        in_company_identity = page.number == 1 or not sections.get("code")
+        in_company_identity = company_identity and (page.number == 1 or not sections.get("code"))
         for key, block in blocks:
-            if key in {"owners", "ubo"}:
+            if key in {"owners", "ubo", "management"}:
                 expanded = expanded or key == "owners"
                 in_company_identity = False
+                company_identity = False
             if key == "code" and not in_company_identity:
                 continue
             if key == "boundary":
                 in_company_identity = False
+                company_identity = False
                 continue
             for name, value_lines, has_body in field_values(key, block):
                 sections.setdefault(name, []).append(Section(page.number, value_lines, has_body))

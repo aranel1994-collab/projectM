@@ -14,7 +14,7 @@ from urllib.parse import urlparse
 
 from .analysis import analyze
 from .extraction import ExtractionError, api_key
-from .history import ACTIONS_BY_ROUTE, History
+from .history import ACTIONS_BY_ROUTE, MAX_ENTRY_ID, History
 from .pdf import DocumentError, MAX_BYTES
 
 
@@ -35,6 +35,19 @@ def examples():
 
 class Handler(BaseHTTPRequestHandler):
     server_version = "mono-check"
+
+    def parse_request(self):
+        if not super().parse_request():
+            return False
+        port = self.server.server_port
+        allowed = {f"127.0.0.1:{port}", f"localhost:{port}"}
+        if port == 80:
+            allowed.update({"127.0.0.1", "localhost"})
+        hosts = self.headers.get_all("Host", [])
+        if len(hosts) == 1 and hosts[0].lower() in allowed:
+            return True
+        self.send_json(HTTPStatus.BAD_REQUEST, {"error": "Відкрийте демо за локальною адресою."})
+        return False
 
     def send_content(self, status, content, media_type):
         self.send_response(status)
@@ -65,7 +78,7 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         path = urlparse(self.path).path
-        history_match = re.fullmatch(r"/api/history/([1-9][0-9]{0,17})", path)
+        history_match = re.fullmatch(r"/api/history/([1-9][0-9]{0,18})", path)
         if path in ASSETS:
             file, media_type = ASSETS[path]
             self.send_content(HTTPStatus.OK, (WEB / file).read_bytes(), media_type)
@@ -73,7 +86,7 @@ class Handler(BaseHTTPRequestHandler):
             self.send_content(HTTPStatus.NO_CONTENT, b"", "image/x-icon")
         elif path == "/api/config":
             self.send_json(HTTPStatus.OK, {"examples": examples(), "live_available": bool(api_key())})
-        elif history_match:
+        elif history_match and int(history_match[1]) <= MAX_ENTRY_ID:
             self.history_details(int(history_match[1]))
         elif path == "/api/history":
             try:
