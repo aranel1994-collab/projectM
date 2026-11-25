@@ -62,5 +62,21 @@
     "pdf": "document-note",
     "claimed_code": "00073142",
     "expected_route": "STANDARD"
+  },
+  {
+    "id": "terminated",
+    "title": "Компанія припинена",
+    "description": "У виписці зазначено стан «припинено».",
+    "pdf": "terminated",
+    "claimed_code": "00073142",
+    "expected_route": "ESCALATE"
+  },
+  {
+    "id": "terminating",
+    "title": "У процесі припинення",
+    "description": "У виписці є окремий розділ про процес припинення.",
+    "pdf": "terminating",
+    "claimed_code": "00073142",
+    "expected_route": "MANUAL_REVIEW"
   }
 ]
