@@ -51,9 +51,15 @@ function setPage(number, evidence, button) {
   $("sheet").alt = "Сторінка " + number + " документа";
   $("view-kind").textContent = page.kind === "scan" ? "Зображення" : "Текстовий шар";
   $("marks").replaceChildren();
-  if (activeButton) activeButton.setAttribute("aria-pressed", "false");
+  if (activeButton) {
+    activeButton.setAttribute("aria-pressed", "false");
+    activeButton.closest(".fact-row")?.classList.remove("selected");
+  }
   activeButton = button;
-  if (button) button.setAttribute("aria-pressed", "true");
+  if (button) {
+    button.setAttribute("aria-pressed", "true");
+    button.closest(".fact-row")?.classList.add("selected");
+  }
   for (const rect of (evidence && evidence.positions) || []) {
     const marker = node("span", "", "mark");
     marker.style.left = rect.x + "%";
@@ -64,7 +70,7 @@ function setPage(number, evidence, button) {
   }
   const description = evidence
     ? evidence.label + " · с. " + number + " · " + evidence.fragment
-    : "Сторінка " + number + " · вибери доказ у звіті";
+    : "Сторінка " + number + " · обери рядок або доказ у звіті";
   $("active-proof").textContent = description;
   for (const pager of $("pager").children) {
     if (Number(pager.dataset.page) === chosenPage) pager.setAttribute("aria-current", "page");
@@ -75,10 +81,11 @@ function setPage(number, evidence, button) {
   }
 }
 
-function proofButton(evidence, index, total) {
+function proofButton(evidence, index, total, compact = false) {
   const description = {scan: "Зображення", text_model: "Цитата моделі"}[evidence.source] || "Доказ";
   const suffix = total > 1 ? " · " + (index + 1) : "";
-  const button = node("button", description + " · с. " + evidence.page + suffix, "proof");
+  const pageLabel = "с. " + evidence.page + suffix;
+  const button = node("button", compact ? pageLabel : description + " · " + pageLabel, "proof");
   button.type = "button";
   button.setAttribute("aria-pressed", "false");
   button.setAttribute("aria-label", description + " на сторінці " + evidence.page + " · " + evidence.label + suffix);
@@ -86,16 +93,52 @@ function proofButton(evidence, index, total) {
   return button;
 }
 
-function renderFact(field) {
-  const fact = node("article", "", "fact");
-  const title = node("div", "", "fact-title");
+function renderFact([key, field]) {
+  const row = node("tr", "", "fact-row");
+  row.dataset.field = key;
+  row.setAttribute("role", "row");
+  const label = node("th", field.label);
+  label.scope = "row";
+  label.setAttribute("role", "rowheader");
+  const values = node("td");
+  const status = node("td");
+  const proofs = node("td");
+  for (const cell of [values, status, proofs]) cell.setAttribute("role", "cell");
   const state = report.mode === "replay" && field.state === "scan" ? "Підготовлені дані зі скану" : fieldStates[field.state];
-  title.append(node("h3", field.label), pill(state, field.state === "present" ? "pass" : field.state === "conflicting" ? "fail" : "other"));
-  fact.append(title);
+  status.append(pill(state, field.state === "present" ? "pass" : field.state === "conflicting" ? "fail" : "other"));
+  const stack = node("div", "", "fact-proofs");
   field.findings.forEach((item, index) => {
-    fact.append(node("p", item.value), proofButton({...item, label: field.label}, index, field.findings.length));
+    values.append(node("div", item.value));
+    stack.append(proofButton({...item, label: field.label}, index, field.findings.length, true));
   });
-  return fact;
+  if (stack.firstElementChild) {
+    proofs.append(stack);
+    row.classList.add("has-proof");
+    row.addEventListener("click", (event) => {
+      if (!event.target.closest("button")) stack.firstElementChild.click();
+    });
+  } else {
+    values.append(node("span", "—", "muted"));
+    proofs.append(node("span", "—", "muted"));
+  }
+  row.append(label, values, status, proofs);
+  return row;
+}
+
+function factTable(fields, label) {
+  const table = node("table", "", "facts-table");
+  table.setAttribute("role", "table");
+  table.setAttribute("aria-label", label);
+  const headings = table.createTHead().insertRow();
+  for (const title of ["Реквізит", "Значення з PDF", "Статус", "Доказ"]) {
+    const heading = node("th", title);
+    heading.scope = "col";
+    headings.append(heading);
+  }
+  const body = table.createTBody();
+  body.setAttribute("role", "rowgroup");
+  body.append(...fields.map(renderFact));
+  return table;
 }
 
 function renderRule(rule) {
@@ -233,11 +276,11 @@ function renderReport(data, entry = null) {
     head.append(reasons);
   }
 
-  const primaryFields = Object.values(data.fields).slice(0, 7);
-  const otherFields = Object.values(data.fields).slice(7);
-  const more = node("details");
-  more.append(node("summary", "Власність, стан і види діяльності"), ...otherFields.map(renderFact));
-  $("facts").replaceChildren(...primaryFields.map(renderFact), more);
+  const fields = Object.entries(data.fields);
+  const more = node("details", "", "facts-more");
+  more.append(node("summary", "Власність, стан і види діяльності"),
+    factTable(fields.slice(7), "Власність, стан і види діяльності"));
+  $("facts").replaceChildren(factTable(fields.slice(0, 7), "Основні реквізити з виписки"), more);
   const own = data.results.filter((rule) => rule.group === "pdf");
   $("checks").replaceChildren(...own.map(renderRule));
   if (!own.length) $("checks").append(node("p", "Виберіть дату, для якої опубліковано набір правил.", "muted"));
